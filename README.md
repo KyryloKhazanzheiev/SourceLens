@@ -6,6 +6,8 @@ SourceLens is a focused RAG application for uploading PDF or text documents, ask
 
 The key product rule is simple: if the selected documents do not support an answer, SourceLens says so.
 
+![SourceLens grounded answer with cited evidence](docs/images/screenshot.png)
+
 ## What the first draft already does
 
 - Upload and validate PDF or UTF-8 TXT files up to 20 MB.
@@ -22,17 +24,17 @@ The key product rule is simple: if the selected documents do not support an answ
 
 ## Stack
 
-| Layer | Choice | Why |
-|---|---|---|
-| API | FastAPI + Pydantic v2 | Explicit contracts, validation, OpenAPI generation |
-| UI | Next.js + TypeScript + Tailwind + shadcn-style primitives | Fast product iteration with a polished, accessible component model |
-| Server state | TanStack Query | Predictable async loading, invalidation, and mutation states |
-| Typed client | Hey API | Generates the frontend SDK from FastAPI's OpenAPI contract |
-| Metadata | MongoDB | Natural fit for evolving document, conversation, and citation records |
-| Vector search | LanceDB | Embedded local vector storage with a clean path to object storage/managed hosting |
-| LLM | OpenAI Responses API, `gpt-5.6-terra` | Strong quality/cost balance; model remains configurable |
-| Embeddings | `text-embedding-3-small` | Cost-effective default for semantic retrieval |
-| Runtime | Docker Compose | Repeatable local backend and database setup |
+| Layer         | Choice                                                    | Why                                                                               |
+| ------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| API           | FastAPI + Pydantic v2                                     | Explicit contracts, validation, OpenAPI generation                                |
+| UI            | Next.js + TypeScript + Tailwind + shadcn-style primitives | Fast product iteration with a polished, accessible component model                |
+| Server state  | TanStack Query                                            | Predictable async loading, invalidation, and mutation states                      |
+| Typed client  | Hey API                                                   | Generates the frontend SDK from FastAPI's OpenAPI contract                        |
+| Metadata      | MongoDB                                                   | Natural fit for evolving document, conversation, and citation records             |
+| Vector search | LanceDB                                                   | Embedded local vector storage with a clean path to object storage/managed hosting |
+| LLM           | OpenAI Responses API, `gpt-5.6-terra`                     | Strong quality/cost balance; model remains configurable                           |
+| Embeddings    | `text-embedding-3-small`                                  | Cost-effective default for semantic retrieval                                     |
+| Runtime       | Docker Compose                                            | Repeatable local backend and database setup                                       |
 
 ## Architecture
 
@@ -130,17 +132,17 @@ This is deliberately a direct RAG pipeline, not an agent. There is one predictab
 
 ## API surface
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/api/v1/health/live` | Process liveness |
-| `GET` | `/api/v1/health/ready` | MongoDB, LanceDB, and API-key readiness |
-| `POST` | `/api/v1/documents` | Upload and index a document |
-| `GET` | `/api/v1/documents` | List document states |
-| `GET` | `/api/v1/documents/{id}` | Read document metadata |
-| `DELETE` | `/api/v1/documents/{id}` | Remove file, vectors, and metadata |
-| `POST` | `/api/v1/conversations` | Create a document-scoped conversation |
-| `GET` | `/api/v1/conversations/{id}` | Read conversation and messages |
-| `POST` | `/api/v1/conversations/{id}/messages` | Retrieve, answer, and cite |
+| Method   | Endpoint                              | Purpose                                 |
+| -------- | ------------------------------------- | --------------------------------------- |
+| `GET`    | `/api/v1/health/live`                 | Process liveness                        |
+| `GET`    | `/api/v1/health/ready`                | MongoDB, LanceDB, and API-key readiness |
+| `POST`   | `/api/v1/documents`                   | Upload and index a document             |
+| `GET`    | `/api/v1/documents`                   | List document states                    |
+| `GET`    | `/api/v1/documents/{id}`              | Read document metadata                  |
+| `DELETE` | `/api/v1/documents/{id}`              | Remove file, vectors, and metadata      |
+| `POST`   | `/api/v1/conversations`               | Create a document-scoped conversation   |
+| `GET`    | `/api/v1/conversations/{id}`          | Read conversation and messages          |
+| `POST`   | `/api/v1/conversations/{id}/messages` | Retrieve, answer, and cite              |
 
 ## Quality checks
 
