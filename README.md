@@ -186,6 +186,8 @@ Open `http://localhost:3000`.
 
 ## Demo flow
 
+![SourceLens end-to-end demonstration](docs/video/Video.gif)
+
 1. Open SourceLens and confirm that the two Atlas sample documents are ready.
 2. Start a new chat and select both documents.
 3. Ask when Atlas launches and who owns the final go-live recommendation.
