@@ -16,12 +16,13 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 disabled:pointer-events-none disabled:opacity-45",
+        "inline-flex items-center justify-center gap-2 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#08BDB8] disabled:pointer-events-none disabled:opacity-40",
         variant === "primary" &&
-          "bg-violet-600 text-white shadow-[0_12px_30px_rgba(124,58,237,.24)] hover:bg-violet-500",
+          "bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200",
         variant === "secondary" &&
-          "border border-slate-200 bg-white text-slate-700 hover:border-violet-200 hover:bg-violet-50",
-        variant === "ghost" && "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
+          "border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-300 dark:hover:border-neutral-600 dark:hover:bg-neutral-900",
+        variant === "ghost" &&
+          "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-950 dark:hover:bg-neutral-900 dark:hover:text-white",
         size === "default" && "h-11 px-4",
         size === "icon" && "size-9",
         className,

@@ -1,17 +1,22 @@
 import hashlib
 import re
 from dataclasses import dataclass
+from io import BytesIO
 from pathlib import Path
 from uuid import uuid4
 
 import fitz
+import structlog
 from fastapi import UploadFile
+from starlette.datastructures import Headers
 
 from app.core.settings import Settings
 from app.repositories.mongo import MongoRepository
 from app.repositories.vectors import VectorRepository
 from app.schemas import Document, DocumentStatus
 from app.services.openai_client import OpenAIService
+
+log = structlog.get_logger()
 
 
 class DocumentValidationError(ValueError):
@@ -106,6 +111,42 @@ class DocumentService:
         self.vectors = vectors
         self.openai = openai
         self.settings.upload_path.mkdir(parents=True, exist_ok=True)
+
+    async def seed_samples(self) -> None:
+        sample_path = self.settings.sample_documents_path
+        if not sample_path.exists():
+            log.warning("sample_documents_path_missing", path=str(sample_path))
+            return
+
+        for path in sorted(sample_path.glob("*.txt")):
+            data = path.read_bytes()
+            digest = hashlib.sha256(data).hexdigest()
+            duplicate = await self.mongo.get_document_by_sha(digest)
+            if duplicate and duplicate.status == DocumentStatus.ready:
+                continue
+            if duplicate:
+                await self.delete(duplicate.id)
+
+            upload = UploadFile(
+                file=BytesIO(data),
+                filename=path.name,
+                headers=Headers({"content-type": "text/plain"}),
+            )
+            try:
+                document = await self.ingest(upload)
+                log.info(
+                    "sample_document_seeded",
+                    document_id=document.id,
+                    filename=document.filename,
+                )
+            except Exception as exc:
+                log.warning(
+                    "sample_document_seed_failed",
+                    filename=path.name,
+                    error=str(exc),
+                )
+            finally:
+                await upload.close()
 
     async def ingest(self, upload: UploadFile) -> Document:
         filename = Path(upload.filename or "").name

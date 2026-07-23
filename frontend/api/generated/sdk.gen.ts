@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateConversationApiV1ConversationsPostData, CreateConversationApiV1ConversationsPostErrors, CreateConversationApiV1ConversationsPostResponses, CreateMessageApiV1ConversationsConversationIdMessagesPostData, CreateMessageApiV1ConversationsConversationIdMessagesPostErrors, CreateMessageApiV1ConversationsConversationIdMessagesPostResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteData, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, GetConversationApiV1ConversationsConversationIdGetData, GetConversationApiV1ConversationsConversationIdGetErrors, GetConversationApiV1ConversationsConversationIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetData, GetDocumentApiV1DocumentsDocumentIdGetErrors, GetDocumentApiV1DocumentsDocumentIdGetResponses, ListDocumentsApiV1DocumentsGetData, ListDocumentsApiV1DocumentsGetResponses, LivenessApiV1HealthLiveGetData, LivenessApiV1HealthLiveGetResponses, ReadinessApiV1HealthReadyGetData, ReadinessApiV1HealthReadyGetResponses, UploadDocumentApiV1DocumentsPostData, UploadDocumentApiV1DocumentsPostErrors, UploadDocumentApiV1DocumentsPostResponses } from './types.gen';
+import type { CreateConversationApiV1ConversationsPostData, CreateConversationApiV1ConversationsPostErrors, CreateConversationApiV1ConversationsPostResponses, CreateMessageApiV1ConversationsConversationIdMessagesPostData, CreateMessageApiV1ConversationsConversationIdMessagesPostErrors, CreateMessageApiV1ConversationsConversationIdMessagesPostResponses, DeleteConversationApiV1ConversationsConversationIdDeleteData, DeleteConversationApiV1ConversationsConversationIdDeleteErrors, DeleteConversationApiV1ConversationsConversationIdDeleteResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteData, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, GetConversationApiV1ConversationsConversationIdGetData, GetConversationApiV1ConversationsConversationIdGetErrors, GetConversationApiV1ConversationsConversationIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetData, GetDocumentApiV1DocumentsDocumentIdGetErrors, GetDocumentApiV1DocumentsDocumentIdGetResponses, ListConversationsApiV1ConversationsGetData, ListConversationsApiV1ConversationsGetResponses, ListDocumentsApiV1DocumentsGetData, ListDocumentsApiV1DocumentsGetResponses, LivenessApiV1HealthLiveGetData, LivenessApiV1HealthLiveGetResponses, ReadinessApiV1HealthReadyGetData, ReadinessApiV1HealthReadyGetResponses, UploadDocumentApiV1DocumentsPostData, UploadDocumentApiV1DocumentsPostErrors, UploadDocumentApiV1DocumentsPostResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -57,6 +57,11 @@ export const deleteDocumentApiV1DocumentsDocumentIdDelete = <ThrowOnError extend
 export const getDocumentApiV1DocumentsDocumentIdGet = <ThrowOnError extends boolean = false>(options: Options<GetDocumentApiV1DocumentsDocumentIdGetData, ThrowOnError>): RequestResult<GetDocumentApiV1DocumentsDocumentIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetErrors, ThrowOnError> => (options.client ?? client).get<GetDocumentApiV1DocumentsDocumentIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetErrors, ThrowOnError>({ url: '/api/v1/documents/{document_id}', ...options });
 
 /**
+ * List Conversations
+ */
+export const listConversationsApiV1ConversationsGet = <ThrowOnError extends boolean = false>(options?: Options<ListConversationsApiV1ConversationsGetData, ThrowOnError>): RequestResult<ListConversationsApiV1ConversationsGetResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListConversationsApiV1ConversationsGetResponses, unknown, ThrowOnError>({ url: '/api/v1/conversations', ...options });
+
+/**
  * Create Conversation
  */
 export const createConversationApiV1ConversationsPost = <ThrowOnError extends boolean = false>(options: Options<CreateConversationApiV1ConversationsPostData, ThrowOnError>): RequestResult<CreateConversationApiV1ConversationsPostResponses, CreateConversationApiV1ConversationsPostErrors, ThrowOnError> => (options.client ?? client).post<CreateConversationApiV1ConversationsPostResponses, CreateConversationApiV1ConversationsPostErrors, ThrowOnError>({
@@ -67,6 +72,11 @@ export const createConversationApiV1ConversationsPost = <ThrowOnError extends bo
         ...options.headers
     }
 });
+
+/**
+ * Delete Conversation
+ */
+export const deleteConversationApiV1ConversationsConversationIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteConversationApiV1ConversationsConversationIdDeleteData, ThrowOnError>): RequestResult<DeleteConversationApiV1ConversationsConversationIdDeleteResponses, DeleteConversationApiV1ConversationsConversationIdDeleteErrors, ThrowOnError> => (options.client ?? client).delete<DeleteConversationApiV1ConversationsConversationIdDeleteResponses, DeleteConversationApiV1ConversationsConversationIdDeleteErrors, ThrowOnError>({ url: '/api/v1/conversations/{conversation_id}', ...options });
 
 /**
  * Get Conversation

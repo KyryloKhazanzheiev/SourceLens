@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
-from pymongo import ASCENDING, AsyncMongoClient
+from pymongo import ASCENDING, DESCENDING, AsyncMongoClient
 
 from app.schemas import Conversation, ConversationDetail, Document, Message
 
@@ -31,6 +31,7 @@ class MongoRepository:
         await self.db.messages.create_index(
             [("conversation_id", ASCENDING), ("created_at", ASCENDING)]
         )
+        await self.db.conversations.create_index([("updated_at", DESCENDING)])
 
     async def close(self) -> None:
         await self.client.close()
@@ -82,6 +83,10 @@ class MongoRepository:
         record = await self.db.conversations.find_one({"_id": conversation_id})
         return Conversation.model_validate(_public(record)) if record else None
 
+    async def list_conversations(self) -> list[Conversation]:
+        cursor = self.db.conversations.find().sort("updated_at", DESCENDING)
+        return [Conversation.model_validate(_public(record)) async for record in cursor]
+
     async def get_conversation_detail(self, conversation_id: str) -> ConversationDetail | None:
         conversation = await self.get_conversation(conversation_id)
         if not conversation:
@@ -89,6 +94,13 @@ class MongoRepository:
         cursor = self.db.messages.find({"conversation_id": conversation_id}).sort("created_at", 1)
         messages = [Message.model_validate(_public(record)) async for record in cursor]
         return ConversationDetail(**conversation.model_dump(), messages=messages)
+
+    async def delete_conversation(self, conversation_id: str) -> bool:
+        result = await self.db.conversations.delete_one({"_id": conversation_id})
+        if result.deleted_count != 1:
+            return False
+        await self.db.messages.delete_many({"conversation_id": conversation_id})
+        return True
 
     async def create_message(self, values: dict[str, Any]) -> Message:
         message_id = str(uuid4())

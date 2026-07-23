@@ -1,11 +1,6 @@
 @import "tailwindcss";
 
-:root {
-  --ink: #16213a;
-  --muted: #667085;
-  --line: #e7e9f2;
-  --surface: rgba(255, 255, 255, 0.82);
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 * {
   box-sizing: border-box;
@@ -18,12 +13,8 @@ body {
 
 body {
   margin: 0;
-  color: var(--ink);
   font-family: var(--font-body), sans-serif;
-  background:
-    radial-gradient(circle at 8% 4%, rgba(221, 214, 254, 0.72), transparent 28rem),
-    radial-gradient(circle at 92% 10%, rgba(186, 230, 253, 0.58), transparent 30rem),
-    linear-gradient(145deg, #f8f9ff 0%, #f5f8ff 48%, #faf8ff 100%);
+  background: #090909;
 }
 
 button,
@@ -33,26 +24,36 @@ textarea {
 }
 
 ::selection {
-  background: #ddd6fe;
-}
-
-.glass-panel {
-  border: 1px solid rgba(255, 255, 255, 0.88);
-  background: var(--surface);
-  box-shadow: 0 22px 70px rgba(31, 41, 78, 0.11);
-  backdrop-filter: blur(22px);
+  background: #08bdb8;
+  color: #050505;
 }
 
 .scrollbar-subtle {
   scrollbar-width: thin;
-  scrollbar-color: #d9dceb transparent;
+  scrollbar-color: #737373 transparent;
 }
 
-@keyframes breathe {
-  0%, 100% { opacity: .5; transform: scale(.96); }
-  50% { opacity: 1; transform: scale(1); }
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.animate-breathe {
-  animation: breathe 1.5s ease-in-out infinite;
+@keyframes modal-panel-in {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-backdrop {
+  animation: modal-backdrop-in 140ms ease-out;
+}
+
+.modal-panel {
+  animation: modal-panel-in 180ms cubic-bezier(.2, .8, .2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-panel {
+    animation: none;
+  }
 }

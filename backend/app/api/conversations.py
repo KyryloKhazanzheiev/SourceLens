@@ -17,6 +17,13 @@ from app.services.openai_client import MissingOpenAIKeyError
 router = APIRouter(prefix="/conversations", tags=["conversations"])
 
 
+@router.get("", response_model=list[Conversation])
+async def list_conversations(
+    container: Annotated[AppContainer, Depends(get_container)],
+) -> list[Conversation]:
+    return await container.mongo.list_conversations()
+
+
 @router.post("", response_model=Conversation, status_code=status.HTTP_201_CREATED)
 async def create_conversation(
     payload: ConversationCreate,
@@ -41,6 +48,19 @@ async def get_conversation(
     if conversation is None:
         raise HTTPException(status_code=404, detail="Conversation not found.")
     return conversation
+
+
+@router.delete(
+    "/{conversation_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={404: {"model": ErrorResponse}},
+)
+async def delete_conversation(
+    conversation_id: str,
+    container: Annotated[AppContainer, Depends(get_container)],
+) -> None:
+    if not await container.mongo.delete_conversation(conversation_id):
+        raise HTTPException(status_code=404, detail="Conversation not found.")
 
 
 @router.post(

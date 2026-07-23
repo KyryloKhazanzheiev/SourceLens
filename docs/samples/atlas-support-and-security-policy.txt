@@ -1,0 +1,42 @@
+Atlas Partner Portal — Support and Security Policy
+Policy ID: ATL-OPS-004
+Effective date: October 1, 2026
+Policy owner: Daniel Okafor, Head of Platform Operations
+
+Support coverage
+
+Standard support is available Monday through Friday from 08:00 to 18:00 UK time, excluding public holidays in England and Wales. Severity-one incidents are monitored and handled 24 hours a day, seven days a week.
+
+Incident priorities and response targets
+
+Severity one means the production service is unavailable, data integrity is at immediate risk, or a confirmed security incident affects customer data. Operations must acknowledge a severity-one incident within 30 minutes and provide status updates at least every 60 minutes.
+
+Severity two means a major workflow is unavailable but an acceptable workaround exists. Operations must acknowledge a severity-two incident within four business hours.
+
+Severity three covers minor defects and general support questions. Operations must acknowledge a severity-three request within two business days.
+
+Security controls
+
+All production traffic must use TLS 1.2 or later. Production data must be encrypted at rest using provider-managed keys. Administrative access requires multi-factor authentication and is reviewed every quarter. Access is granted according to least-privilege principles and must be removed within one business day after a user no longer requires it.
+
+Data location and retention
+
+Customer production data and backups must remain in the European Union. Uploaded study documents are retained for seven years unless a customer contract or legal hold requires a longer period. Application logs are retained for 90 days. Security audit records are retained for two years.
+
+Backups and recovery
+
+Production data is backed up every six hours. Backups are encrypted and tested through a restore exercise at least once every quarter. The recovery time objective is four hours, and the recovery point objective is six hours.
+
+Security incident communication
+
+The security lead must notify the product owner and legal counsel immediately after confirming a customer-data incident. Affected customers must receive an initial notification within 24 hours of confirmation unless law enforcement or legal counsel requires a different timeline.
+
+Change management
+
+Production changes require a reviewed pull request, successful automated checks, and an approved deployment record. Emergency changes may use an expedited approval, but they must be reviewed retrospectively within two business days.
+
+Escalation contacts
+
+Platform operations: Daniel Okafor, daniel.okafor@northstar.example
+Security incidents: security@northstar.example
+Customer communications: support@northstar.example

@@ -1,0 +1,48 @@
+Atlas Partner Portal — Project Brief
+Version 1.2
+Owner: Maya Chen, Product Director
+Last updated: July 10, 2026
+
+Purpose
+
+Atlas is a self-service portal for Northstar Health's clinical research partners. It will give approved partner organisations one place to submit study documents, review validation feedback, and track the status of submissions. The first release is intended to replace the shared-mailbox workflow used by the operations team.
+
+Timeline
+
+The internal pilot begins on September 21, 2026 with three partner organisations. Production launch is scheduled for October 15, 2026. The launch date may move only if the steering committee approves a change request before October 1, 2026.
+
+Scope for the first release
+
+- Secure sign-in for partner administrators and contributors.
+- Document upload for PDF and Microsoft Word files.
+- Submission status tracking with email notifications.
+- An operations dashboard for reviewing validation failures.
+- An audit history showing who uploaded, reviewed, approved, or rejected each submission.
+
+The first release does not include electronic signatures, mobile applications, real-time chat, or integrations with external clinical trial management systems.
+
+Delivery responsibilities
+
+The engineering team owns implementation, automated tests, deployment, and technical documentation. The operations team owns validation rules and acceptance testing. Information Security must complete a security review before the production launch. Maya Chen is responsible for the final go-live recommendation.
+
+Acceptance criteria
+
+The release is accepted when all critical user journeys pass, no severity-one defects remain open, and at least 95 percent of the agreed validation scenarios pass. The portal must support files up to 50 MB and retain a complete audit history for every submission.
+
+Budget and constraints
+
+The approved delivery budget is $240,000. The team may use managed cloud services, but production data must remain in the European Union. Any forecast that exceeds the approved budget by more than 10 percent must be reviewed by the steering committee.
+
+Key risks
+
+The largest delivery risk is late confirmation of validation rules from operations. A second risk is delayed security review evidence from third-party vendors. The team will review these risks every Tuesday until launch.
+
+Success measures
+
+Within 60 days of launch, Atlas should reduce submission-related email volume by 40 percent, reduce median validation turnaround time from three business days to one business day, and achieve at least 80 percent weekly adoption among pilot partner users.
+
+Contacts
+
+Product questions: Maya Chen, maya.chen@northstar.example
+Delivery questions: Leo Martins, leo.martins@northstar.example
+Operations questions: Priya Shah, priya.shah@northstar.example

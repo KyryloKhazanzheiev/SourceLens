@@ -8,10 +8,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
-COPY pyproject.toml uv.lock* ./
+COPY backend/pyproject.toml backend/uv.lock* ./
 RUN uv sync --frozen --no-dev --no-install-project
 
-COPY app ./app
+COPY backend/app ./app
+COPY docs/samples /docs/samples
 RUN mkdir -p /data/lancedb /data/uploads
 
 EXPOSE 8000

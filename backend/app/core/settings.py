@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     mongodb_database: str = "sourcelens"
     lancedb_path: Path = Path("./data/lancedb")
     upload_path: Path = Path("./data/uploads")
+    sample_documents_path: Path = Path("../docs/samples")
 
     openai_api_key: str | None = None
     openai_chat_model: str = "gpt-5.6-terra"
@@ -32,7 +33,7 @@ class Settings(BaseSettings):
     chunk_overlap_chars: int = 400
     retrieval_candidates: int = 12
     retrieval_limit: int = 5
-    minimum_relevance: float = Field(default=0.18, ge=0, le=1)
+    minimum_relevance: float = Field(default=0.15, ge=0, le=1)
 
 
 @lru_cache

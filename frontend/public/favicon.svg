@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="source-lens-mark">
+      <rect x="4" y="4" width="56" height="56" rx="16"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#source-lens-mark)">
+    <rect x="4" y="4" width="28" height="28" fill="#08BDB8"/>
+    <rect x="32" y="4" width="28" height="28" fill="#FFCF36"/>
+    <rect x="4" y="32" width="28" height="28" fill="#FFFFFF"/>
+    <rect x="32" y="32" width="28" height="28" fill="#FF7F1F"/>
+  </g>
+</svg>

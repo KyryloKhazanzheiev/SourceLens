@@ -17,6 +17,7 @@ class AppContainer:
 
     async def start(self) -> None:
         await self.mongo.ensure_indexes()
+        await self.documents.seed_samples()
 
     async def close(self) -> None:
         await self.mongo.close()

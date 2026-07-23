@@ -15,6 +15,11 @@ class DocumentStatus(StrEnum):
     failed = "failed"
 
 
+class AbstentionReason(StrEnum):
+    no_relevant_passages = "no_relevant_passages"
+    insufficient_support = "insufficient_support"
+
+
 class Document(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
@@ -68,6 +73,9 @@ class Message(BaseModel):
     content: str
     citations: list[Citation] = []
     has_sufficient_evidence: bool | None = None
+    abstention_reason: AbstentionReason | None = None
+    retrieval_count: int | None = None
+    retrieval_best_relevance: float | None = Field(default=None, ge=0, le=1)
     model: str | None = None
     latency_ms: int | None = None
     created_at: datetime = Field(default_factory=utc_now)

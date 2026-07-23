@@ -1,17 +1,29 @@
 import {
   createConversationApiV1ConversationsPost,
   createMessageApiV1ConversationsConversationIdMessagesPost,
+  deleteConversationApiV1ConversationsConversationIdDelete,
   deleteDocumentApiV1DocumentsDocumentIdDelete,
+  getConversationApiV1ConversationsConversationIdGet,
+  listConversationsApiV1ConversationsGet,
   listDocumentsApiV1DocumentsGet,
   uploadDocumentApiV1DocumentsPost,
   type Citation,
+  type Conversation,
+  type ConversationDetail,
   type Document as DocumentRecord,
   type DocumentStatus,
   type Message as MessageRecord,
 } from "@/api/generated";
 import { client } from "@/api/generated/client.gen";
 
-export type { Citation, DocumentRecord, DocumentStatus, MessageRecord };
+export type {
+  Citation,
+  Conversation,
+  ConversationDetail,
+  DocumentRecord,
+  DocumentStatus,
+  MessageRecord,
+};
 
 client.setConfig({
   baseUrl: process.env.NEXT_PUBLIC_API_ORIGIN ?? "http://localhost:8000",
@@ -21,6 +33,15 @@ const checked = { throwOnError: true } as const;
 
 export const api = {
   listDocuments: async () => (await listDocumentsApiV1DocumentsGet(checked)).data,
+  listConversations: async () =>
+    (await listConversationsApiV1ConversationsGet(checked)).data,
+  getConversation: async (id: string) =>
+    (
+      await getConversationApiV1ConversationsConversationIdGet({
+        ...checked,
+        path: { conversation_id: id },
+      })
+    ).data,
   uploadDocument: async (file: File) =>
     (await uploadDocumentApiV1DocumentsPost({ ...checked, body: { file } })).data,
   deleteDocument: async (id: string) =>
@@ -35,6 +56,13 @@ export const api = {
       await createConversationApiV1ConversationsPost({
         ...checked,
         body: { document_ids: documentIds },
+      })
+    ).data,
+  deleteConversation: async (id: string) =>
+    (
+      await deleteConversationApiV1ConversationsConversationIdDelete({
+        ...checked,
+        path: { conversation_id: id },
       })
     ).data,
   sendMessage: async (conversationId: string, content: string) =>

@@ -4,10 +4,15 @@ from typing import Any
 from app.core.settings import Settings
 from app.repositories.mongo import MongoRepository
 from app.repositories.vectors import VectorRepository
-from app.schemas import Citation, Message
+from app.schemas import AbstentionReason, Citation, Message
 from app.services.openai_client import OpenAIService
 
-ABSTENTION = "I couldn't find enough evidence in the selected documents to answer that."
+NO_RELEVANT_PASSAGES = (
+    "I couldn't find a relevant passage in the selected documents for that question."
+)
+INSUFFICIENT_SUPPORT = (
+    "I found related passages, but they do not provide enough evidence for a reliable answer."
+)
 
 
 class RagService:
@@ -41,6 +46,7 @@ class RagService:
                 "citations": [],
             }
         )
+        await self.mongo.update_conversation_title(conversation_id, question)
         [query_vector] = await self.openai.embed([question])
         matches = self.vectors.search(
             query_vector,
@@ -50,11 +56,13 @@ class RagService:
         matches = [
             match for match in matches if self._relevance(match) >= self.settings.minimum_relevance
         ][: self.settings.retrieval_limit]
+        best_relevance = self._relevance(matches[0]) if matches else None
 
         if not matches:
-            answer = ABSTENTION
+            answer = NO_RELEVANT_PASSAGES
             cited_matches: list[dict[str, Any]] = []
             sufficient = False
+            abstention_reason = AbstentionReason.no_relevant_passages
         else:
             payload = await self.openai.answer(question, matches)
             valid_source_ids = list(
@@ -65,7 +73,10 @@ class RagService:
                 )
             )
             sufficient = payload.has_sufficient_evidence and bool(valid_source_ids)
-            answer = payload.answer if sufficient else ABSTENTION
+            answer = payload.answer if sufficient else INSUFFICIENT_SUPPORT
+            abstention_reason = (
+                None if sufficient else AbstentionReason.insufficient_support
+            )
             cited_matches = (
                 [matches[source_id - 1] for source_id in valid_source_ids]
                 if sufficient
@@ -91,9 +102,11 @@ class RagService:
                 "content": answer,
                 "citations": [citation.model_dump() for citation in citations],
                 "has_sufficient_evidence": sufficient,
+                "abstention_reason": abstention_reason,
+                "retrieval_count": len(matches),
+                "retrieval_best_relevance": best_relevance,
                 "model": self.settings.openai_chat_model,
                 "latency_ms": latency_ms,
             }
         )
-        await self.mongo.update_conversation_title(conversation_id, question)
         return message

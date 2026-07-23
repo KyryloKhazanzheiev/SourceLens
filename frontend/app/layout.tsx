@@ -9,8 +9,11 @@ const display = Manrope({ subsets: ["latin"], variable: "--font-display" });
 const body = DM_Sans({ subsets: ["latin"], variable: "--font-body" });
 
 export const metadata: Metadata = {
-  title: "SourceLens — grounded answers from your documents",
-  description: "Upload documents, ask questions, and inspect every source.",
+  title: "SourceLens — ask, verify, trust",
+  description: "Grounded answers with evidence from your documents.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
