@@ -5,6 +5,7 @@ import {
   ArrowUp,
   Check,
   CircleAlert,
+  ExternalLink,
   FileText,
   LoaderCircle,
   Menu,
@@ -25,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   api,
+  documentContentUrl,
   type Citation,
   type ConversationDetail,
   type DocumentRecord,
@@ -92,23 +94,80 @@ function StatusDot({ status }: { status: DocumentRecord["status"] }) {
 }
 
 function EvidenceCard({ citation }: { citation: Citation }) {
+  const sourceNumber = citation.source_number;
+  const relevance = Math.round(citation.relevance * 100);
+
   return (
     <article className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
+          {sourceNumber && (
+            <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#007d78] dark:text-[#5ce1dc]">
+              Source [{sourceNumber}]
+            </p>
+          )}
           <p className="truncate text-xs font-semibold text-neutral-900 dark:text-neutral-100">
             {citation.filename}
           </p>
           <p className="mt-1 text-[10px] text-neutral-500">Page {citation.page_number}</p>
         </div>
-        <span className="rounded-full bg-[#08BDB8]/10 px-2 py-1 text-[9px] font-bold text-[#007d78] dark:text-[#5ce1dc]">
-          {Math.round(citation.relevance * 100)}%
+        <span
+          aria-label={`Source relevance ${relevance}%`}
+          className="shrink-0 rounded-lg bg-[#08BDB8]/10 px-2 py-1.5 text-right text-[#007d78] dark:text-[#5ce1dc]"
+        >
+          <span className="block text-[7px] font-bold uppercase tracking-[0.08em]">
+            Relevance
+          </span>
+          <span className="mt-0.5 block text-[10px] font-extrabold">{relevance}%</span>
         </span>
       </div>
       <p className="mt-4 text-[12px] leading-5 text-neutral-600 dark:text-neutral-400">
         {citation.excerpt}
       </p>
+      <a
+        className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold text-[#007d78] transition hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#08BDB8] dark:text-[#5ce1dc]"
+        href={documentContentUrl(citation.document_id, citation.page_number)}
+        rel="noreferrer"
+        target="_blank"
+      >
+        Open original · page {citation.page_number}
+        <ExternalLink className="size-3" />
+      </a>
     </article>
+  );
+}
+
+function AnswerContent({ message }: { message: MessageRecord }) {
+  const citations = message.citations ?? [];
+  const parts = message.content.split(/(\[\d+\])/g);
+
+  return (
+    <p className="whitespace-pre-wrap text-[13px] leading-7 text-neutral-700 dark:text-neutral-300">
+      {parts.map((part, index) => {
+        const match = part.match(/^\[(\d+)]$/);
+        if (!match) return part;
+
+        const sourceNumber = Number(match[1]);
+        const citation = citations.find(
+          (item, citationIndex) =>
+            (item.source_number ?? citationIndex + 1) === sourceNumber,
+        );
+        if (!citation) return part;
+
+        return (
+          <a
+            key={`${sourceNumber}-${index}`}
+            aria-label={`Open source ${sourceNumber}, ${citation.filename}, page ${citation.page_number}`}
+            className="mx-0.5 inline-flex rounded-md border border-[#08BDB8]/30 bg-[#08BDB8]/10 px-1.5 py-0.5 align-baseline text-[10px] font-extrabold leading-none text-[#007d78] no-underline transition hover:border-[#08BDB8] hover:bg-[#08BDB8]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#08BDB8] dark:text-[#5ce1dc]"
+            href={documentContentUrl(citation.document_id, citation.page_number)}
+            rel="noreferrer"
+            target="_blank"
+          >
+            {part}
+          </a>
+        );
+      })}
+    </p>
   );
 }
 
@@ -551,9 +610,7 @@ export function SourceLensWorkspace() {
                       <div className="flex max-w-[94%] gap-3">
                         <BrandMark className="mt-1 size-6 rounded-md" />
                         <div className="min-w-0">
-                          <p className="whitespace-pre-wrap text-[13px] leading-7 text-neutral-700 dark:text-neutral-300">
-                            {message.content}
-                          </p>
+                          <AnswerContent message={message} />
                           {message.has_sufficient_evidence === false && (
                             <p className="mt-2 max-w-lg text-[10px] leading-4 text-neutral-500">
                               {message.abstention_reason === "no_relevant_passages"
@@ -976,9 +1033,14 @@ export function SourceLensWorkspace() {
             ) : (
               <div className="space-y-3">
                 {activeCitations.length ? (
-                  activeCitations.map((citation) => (
-                    <EvidenceCard key={citation.chunk_id} citation={citation} />
-                  ))
+                  <>
+                    <p className="rounded-xl border border-neutral-200 bg-white/60 px-3 py-2 text-[9px] leading-4 text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950/50">
+                      Relevance measures retrieval similarity, not model confidence.
+                    </p>
+                    {activeCitations.map((citation) => (
+                      <EvidenceCard key={citation.chunk_id} citation={citation} />
+                    ))}
+                  </>
                 ) : (
                   <div className="py-12 text-center">
                     <Search className="mx-auto size-5 text-neutral-400" />

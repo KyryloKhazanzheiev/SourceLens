@@ -16,6 +16,8 @@ INSUFFICIENT_SUPPORT = (
 
 
 class RagService:
+    """Coordinate scoped retrieval, grounded generation, and message persistence."""
+
     def __init__(
         self,
         settings: Settings,
@@ -30,9 +32,11 @@ class RagService:
 
     @staticmethod
     def _relevance(match: dict[str, Any]) -> float:
+        """Convert cosine distance to a bounded, user-facing relevance score."""
         return round(max(0.0, min(1.0, 1.0 - float(match.get("_distance", 1.0)))), 4)
 
     async def ask(self, conversation_id: str, question: str) -> Message:
+        """Answer and persist a question using only the conversation's documents."""
         conversation = await self.mongo.get_conversation(conversation_id)
         if conversation is None:
             raise LookupError("Conversation not found.")
@@ -50,6 +54,7 @@ class RagService:
         [query_vector] = await self.openai.embed([question])
         matches = self.vectors.search(
             query_vector,
+            question,
             conversation.document_ids,
             self.settings.retrieval_candidates,
         )
@@ -60,7 +65,7 @@ class RagService:
 
         if not matches:
             answer = NO_RELEVANT_PASSAGES
-            cited_matches: list[dict[str, Any]] = []
+            cited_sources: list[tuple[int, dict[str, Any]]] = []
             sufficient = False
             abstention_reason = AbstentionReason.no_relevant_passages
         else:
@@ -77,14 +82,15 @@ class RagService:
             abstention_reason = (
                 None if sufficient else AbstentionReason.insufficient_support
             )
-            cited_matches = (
-                [matches[source_id - 1] for source_id in valid_source_ids]
+            cited_sources = (
+                [(source_id, matches[source_id - 1]) for source_id in valid_source_ids]
                 if sufficient
                 else []
             )
 
         citations = [
             Citation(
+                source_number=source_id,
                 chunk_id=match["chunk_id"],
                 document_id=match["document_id"],
                 filename=match["filename"],
@@ -92,7 +98,7 @@ class RagService:
                 excerpt=match["text"][:700],
                 relevance=self._relevance(match),
             )
-            for match in cited_matches
+            for source_id, match in cited_sources
         ]
         latency_ms = round((time.perf_counter() - started) * 1000)
         message = await self.mongo.create_message(

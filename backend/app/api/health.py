@@ -11,6 +11,7 @@ router = APIRouter(prefix="/health", tags=["health"])
 
 @router.get("/live", response_model=HealthResponse)
 async def liveness() -> HealthResponse:
+    """Confirm that the API process is running."""
     return HealthResponse(status="ok")
 
 
@@ -18,6 +19,7 @@ async def liveness() -> HealthResponse:
 async def readiness(
     container: Annotated[AppContainer, Depends(get_container)],
 ) -> HealthResponse:
+    """Report readiness of MongoDB, LanceDB, and OpenAI configuration."""
     checks: dict[str, str] = {}
     try:
         await container.mongo.ping()

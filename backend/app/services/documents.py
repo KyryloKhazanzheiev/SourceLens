@@ -20,23 +20,37 @@ log = structlog.get_logger()
 
 
 class DocumentValidationError(ValueError):
-    pass
+    """Raised when an upload cannot be safely accepted or extracted."""
 
 
 @dataclass(frozen=True)
 class PageText:
+    """Extracted text associated with its one-based source page."""
+
     page_number: int
     text: str
 
 
 @dataclass(frozen=True)
 class TextChunk:
+    """Retrieval chunk with stable position metadata within a page."""
+
     page_number: int
     chunk_index: int
     text: str
 
 
+@dataclass(frozen=True)
+class SourceFile:
+    """Original document file resolved from trusted metadata."""
+
+    document: Document
+    path: Path
+    media_type: str
+
+
 def normalise_text(value: str) -> str:
+    """Normalize whitespace while retaining paragraph boundaries."""
     value = value.replace("\x00", " ").replace("\r\n", "\n")
     value = re.sub(r"[ \t]+", " ", value)
     value = re.sub(r"\n{3,}", "\n\n", value)
@@ -44,6 +58,7 @@ def normalise_text(value: str) -> str:
 
 
 def extract_pages(filename: str, data: bytes) -> list[PageText]:
+    """Extract non-empty, page-aware text from a supported PDF or TXT file."""
     suffix = Path(filename).suffix.lower()
     if suffix == ".txt":
         try:
@@ -71,6 +86,7 @@ def extract_pages(filename: str, data: bytes) -> list[PageText]:
 def chunk_pages(
     pages: list[PageText], chunk_size: int = 2800, overlap: int = 400
 ) -> list[TextChunk]:
+    """Split pages into overlapping chunks without crossing page boundaries."""
     if chunk_size <= overlap or overlap < 0:
         raise ValueError("chunk_size must be greater than overlap")
 
@@ -99,6 +115,8 @@ def chunk_pages(
 
 
 class DocumentService:
+    """Coordinate validation, storage, embedding, and indexing of documents."""
+
     def __init__(
         self,
         settings: Settings,
@@ -113,6 +131,7 @@ class DocumentService:
         self.settings.upload_path.mkdir(parents=True, exist_ok=True)
 
     async def seed_samples(self) -> None:
+        """Idempotently ingest bundled TXT samples that are not already ready."""
         sample_path = self.settings.sample_documents_path
         if not sample_path.exists():
             log.warning("sample_documents_path_missing", path=str(sample_path))
@@ -149,6 +168,7 @@ class DocumentService:
                 await upload.close()
 
     async def ingest(self, upload: UploadFile) -> Document:
+        """Validate and index an upload, recording a failed state on processing errors."""
         filename = Path(upload.filename or "").name
         suffix = Path(filename).suffix.lower()
         if suffix not in {".pdf", ".txt"}:
@@ -234,7 +254,29 @@ class DocumentService:
             )
             raise
 
+    async def get_source_file(self, document_id: str) -> SourceFile | None:
+        """Resolve an original PDF or TXT file without accepting a filesystem path."""
+        document = await self.mongo.get_document(document_id)
+        if not document:
+            return None
+
+        suffix = Path(document.filename).suffix.lower()
+        media_types = {".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8"}
+        if suffix not in media_types:
+            return None
+
+        upload_root = self.settings.upload_path.resolve()
+        source_path = (upload_root / f"{document.id}{suffix}").resolve()
+        if not source_path.is_relative_to(upload_root) or not source_path.is_file():
+            return None
+        return SourceFile(
+            document=document,
+            path=source_path,
+            media_type=media_types[suffix],
+        )
+
     async def delete(self, document_id: str) -> bool:
+        """Remove a document and its vectors and uploaded file when it exists."""
         document = await self.mongo.get_document(document_id)
         if not document:
             return False

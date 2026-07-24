@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 def utc_now() -> datetime:
+    """Return a timezone-aware UTC timestamp for model defaults."""
     return datetime.now(UTC)
 
 
@@ -42,6 +43,7 @@ class ConversationCreate(BaseModel):
     @field_validator("document_ids")
     @classmethod
     def unique_document_ids(cls, value: list[str]) -> list[str]:
+        """Remove duplicate document IDs while preserving selection order."""
         return list(dict.fromkeys(value))
 
 
@@ -54,6 +56,7 @@ class Conversation(BaseModel):
 
 
 class Citation(BaseModel):
+    source_number: int | None = Field(default=None, ge=1)
     chunk_id: str
     document_id: str
     filename: str

@@ -16,6 +16,7 @@ log = structlog.get_logger()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Start application dependencies and close them on shutdown."""
     container = AppContainer(get_settings())
     app.state.container = container
     await container.start()
@@ -45,6 +46,7 @@ app.add_middleware(
 
 @app.middleware("http")
 async def request_logging(request: Request, call_next):
+    """Log the status and elapsed time of each completed HTTP request."""
     started = __import__("time").perf_counter()
     response = await call_next(request)
     log.info(

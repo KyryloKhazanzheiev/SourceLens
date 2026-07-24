@@ -26,6 +26,10 @@ export type BodyUploadDocumentApiV1DocumentsPost = {
  */
 export type Citation = {
     /**
+     * Source Number
+     */
+    source_number?: number | null;
+    /**
      * Chunk Id
      */
     chunk_id: string;
@@ -440,6 +444,38 @@ export type GetDocumentApiV1DocumentsDocumentIdGetResponses = {
 };
 
 export type GetDocumentApiV1DocumentsDocumentIdGetResponse = GetDocumentApiV1DocumentsDocumentIdGetResponses[keyof GetDocumentApiV1DocumentsDocumentIdGetResponses];
+
+export type GetDocumentContentApiV1DocumentsDocumentIdContentGetData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/content';
+};
+
+export type GetDocumentContentApiV1DocumentsDocumentIdContentGetErrors = {
+    /**
+     * Not Found
+     */
+    404: ErrorResponse;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetDocumentContentApiV1DocumentsDocumentIdContentGetError = GetDocumentContentApiV1DocumentsDocumentIdContentGetErrors[keyof GetDocumentContentApiV1DocumentsDocumentIdContentGetErrors];
+
+export type GetDocumentContentApiV1DocumentsDocumentIdContentGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type ListConversationsApiV1ConversationsGetData = {
     body?: never;
