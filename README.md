@@ -197,6 +197,14 @@ Open `http://localhost:3000`.
    abstention.
 7. Start another chat, then reopen the first one from the left sidebar.
 
+## Design process
+
+The interface was explored in Figma before implementation, including the SourceLens
+brand mark, colour system, light and dark themes, and responsive desktop and mobile
+layouts. [Open the SourceLens design file in Figma](https://www.figma.com/design/pEYYaiqqtX8jUY4NgpmQqG/SourceLens?m=auto&t=GJqu8jCTxvrOsgfp-6).
+
+[![SourceLens logo, colour, desktop, and mobile explorations in Figma](docs/images/Figma.png)](https://www.figma.com/design/pEYYaiqqtX8jUY4NgpmQqG/SourceLens?m=auto&t=GJqu8jCTxvrOsgfp-6)
+
 ## Command reference
 
 Run these commands from the repository root unless a different directory is shown.
