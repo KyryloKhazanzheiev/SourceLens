@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateConversationApiV1ConversationsPostData, CreateConversationApiV1ConversationsPostErrors, CreateConversationApiV1ConversationsPostResponses, CreateMessageApiV1ConversationsConversationIdMessagesPostData, CreateMessageApiV1ConversationsConversationIdMessagesPostErrors, CreateMessageApiV1ConversationsConversationIdMessagesPostResponses, DeleteConversationApiV1ConversationsConversationIdDeleteData, DeleteConversationApiV1ConversationsConversationIdDeleteErrors, DeleteConversationApiV1ConversationsConversationIdDeleteResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteData, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, GetConversationApiV1ConversationsConversationIdGetData, GetConversationApiV1ConversationsConversationIdGetErrors, GetConversationApiV1ConversationsConversationIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetData, GetDocumentApiV1DocumentsDocumentIdGetErrors, GetDocumentApiV1DocumentsDocumentIdGetResponses, ListConversationsApiV1ConversationsGetData, ListConversationsApiV1ConversationsGetResponses, ListDocumentsApiV1DocumentsGetData, ListDocumentsApiV1DocumentsGetResponses, LivenessApiV1HealthLiveGetData, LivenessApiV1HealthLiveGetResponses, ReadinessApiV1HealthReadyGetData, ReadinessApiV1HealthReadyGetResponses, UploadDocumentApiV1DocumentsPostData, UploadDocumentApiV1DocumentsPostErrors, UploadDocumentApiV1DocumentsPostResponses } from './types.gen';
+import type { CreateConversationApiV1ConversationsPostData, CreateConversationApiV1ConversationsPostErrors, CreateConversationApiV1ConversationsPostResponses, CreateMessageApiV1ConversationsConversationIdMessagesPostData, CreateMessageApiV1ConversationsConversationIdMessagesPostErrors, CreateMessageApiV1ConversationsConversationIdMessagesPostResponses, DeleteConversationApiV1ConversationsConversationIdDeleteData, DeleteConversationApiV1ConversationsConversationIdDeleteErrors, DeleteConversationApiV1ConversationsConversationIdDeleteResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteData, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, GetConversationApiV1ConversationsConversationIdGetData, GetConversationApiV1ConversationsConversationIdGetErrors, GetConversationApiV1ConversationsConversationIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetData, GetDocumentApiV1DocumentsDocumentIdGetErrors, GetDocumentApiV1DocumentsDocumentIdGetResponses, GetDocumentContentApiV1DocumentsDocumentIdContentGetData, GetDocumentContentApiV1DocumentsDocumentIdContentGetErrors, GetDocumentContentApiV1DocumentsDocumentIdContentGetResponses, ListConversationsApiV1ConversationsGetData, ListConversationsApiV1ConversationsGetResponses, ListDocumentsApiV1DocumentsGetData, ListDocumentsApiV1DocumentsGetResponses, LivenessApiV1HealthLiveGetData, LivenessApiV1HealthLiveGetResponses, ReadinessApiV1HealthReadyGetData, ReadinessApiV1HealthReadyGetResponses, UploadDocumentApiV1DocumentsPostData, UploadDocumentApiV1DocumentsPostErrors, UploadDocumentApiV1DocumentsPostResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -20,21 +20,29 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 
 /**
  * Liveness
+ *
+ * Confirm that the API process is running.
  */
 export const livenessApiV1HealthLiveGet = <ThrowOnError extends boolean = false>(options?: Options<LivenessApiV1HealthLiveGetData, ThrowOnError>): RequestResult<LivenessApiV1HealthLiveGetResponses, unknown, ThrowOnError> => (options?.client ?? client).get<LivenessApiV1HealthLiveGetResponses, unknown, ThrowOnError>({ url: '/api/v1/health/live', ...options });
 
 /**
  * Readiness
+ *
+ * Report readiness of MongoDB, LanceDB, and OpenAI configuration.
  */
 export const readinessApiV1HealthReadyGet = <ThrowOnError extends boolean = false>(options?: Options<ReadinessApiV1HealthReadyGetData, ThrowOnError>): RequestResult<ReadinessApiV1HealthReadyGetResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ReadinessApiV1HealthReadyGetResponses, unknown, ThrowOnError>({ url: '/api/v1/health/ready', ...options });
 
 /**
  * List Documents
+ *
+ * Return uploaded documents ordered by creation time.
  */
 export const listDocumentsApiV1DocumentsGet = <ThrowOnError extends boolean = false>(options?: Options<ListDocumentsApiV1DocumentsGetData, ThrowOnError>): RequestResult<ListDocumentsApiV1DocumentsGetResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListDocumentsApiV1DocumentsGetResponses, unknown, ThrowOnError>({ url: '/api/v1/documents', ...options });
 
 /**
  * Upload Document
+ *
+ * Validate, persist, chunk, embed, and index an uploaded document.
  */
 export const uploadDocumentApiV1DocumentsPost = <ThrowOnError extends boolean = false>(options: Options<UploadDocumentApiV1DocumentsPostData, ThrowOnError>): RequestResult<UploadDocumentApiV1DocumentsPostResponses, UploadDocumentApiV1DocumentsPostErrors, ThrowOnError> => (options.client ?? client).post<UploadDocumentApiV1DocumentsPostResponses, UploadDocumentApiV1DocumentsPostErrors, ThrowOnError>({
     ...formDataBodySerializer,
@@ -48,21 +56,36 @@ export const uploadDocumentApiV1DocumentsPost = <ThrowOnError extends boolean = 
 
 /**
  * Delete Document
+ *
+ * Remove a document from metadata, file, and vector storage.
  */
 export const deleteDocumentApiV1DocumentsDocumentIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteDocumentApiV1DocumentsDocumentIdDeleteData, ThrowOnError>): RequestResult<DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, ThrowOnError> => (options.client ?? client).delete<DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, ThrowOnError>({ url: '/api/v1/documents/{document_id}', ...options });
 
 /**
  * Get Document
+ *
+ * Return one document or respond with 404 when it does not exist.
  */
 export const getDocumentApiV1DocumentsDocumentIdGet = <ThrowOnError extends boolean = false>(options: Options<GetDocumentApiV1DocumentsDocumentIdGetData, ThrowOnError>): RequestResult<GetDocumentApiV1DocumentsDocumentIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetErrors, ThrowOnError> => (options.client ?? client).get<GetDocumentApiV1DocumentsDocumentIdGetResponses, GetDocumentApiV1DocumentsDocumentIdGetErrors, ThrowOnError>({ url: '/api/v1/documents/{document_id}', ...options });
 
 /**
+ * Get Document Content
+ *
+ * Stream the original document inline for citation verification.
+ */
+export const getDocumentContentApiV1DocumentsDocumentIdContentGet = <ThrowOnError extends boolean = false>(options: Options<GetDocumentContentApiV1DocumentsDocumentIdContentGetData, ThrowOnError>): RequestResult<GetDocumentContentApiV1DocumentsDocumentIdContentGetResponses, GetDocumentContentApiV1DocumentsDocumentIdContentGetErrors, ThrowOnError> => (options.client ?? client).get<GetDocumentContentApiV1DocumentsDocumentIdContentGetResponses, GetDocumentContentApiV1DocumentsDocumentIdContentGetErrors, ThrowOnError>({ url: '/api/v1/documents/{document_id}/content', ...options });
+
+/**
  * List Conversations
+ *
+ * Return saved conversations ordered by most recent activity.
  */
 export const listConversationsApiV1ConversationsGet = <ThrowOnError extends boolean = false>(options?: Options<ListConversationsApiV1ConversationsGetData, ThrowOnError>): RequestResult<ListConversationsApiV1ConversationsGetResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListConversationsApiV1ConversationsGetResponses, unknown, ThrowOnError>({ url: '/api/v1/conversations', ...options });
 
 /**
  * Create Conversation
+ *
+ * Create a conversation scoped to documents that are ready for retrieval.
  */
 export const createConversationApiV1ConversationsPost = <ThrowOnError extends boolean = false>(options: Options<CreateConversationApiV1ConversationsPostData, ThrowOnError>): RequestResult<CreateConversationApiV1ConversationsPostResponses, CreateConversationApiV1ConversationsPostErrors, ThrowOnError> => (options.client ?? client).post<CreateConversationApiV1ConversationsPostResponses, CreateConversationApiV1ConversationsPostErrors, ThrowOnError>({
     url: '/api/v1/conversations',
@@ -75,16 +98,22 @@ export const createConversationApiV1ConversationsPost = <ThrowOnError extends bo
 
 /**
  * Delete Conversation
+ *
+ * Delete a conversation and all messages that belong to it.
  */
 export const deleteConversationApiV1ConversationsConversationIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteConversationApiV1ConversationsConversationIdDeleteData, ThrowOnError>): RequestResult<DeleteConversationApiV1ConversationsConversationIdDeleteResponses, DeleteConversationApiV1ConversationsConversationIdDeleteErrors, ThrowOnError> => (options.client ?? client).delete<DeleteConversationApiV1ConversationsConversationIdDeleteResponses, DeleteConversationApiV1ConversationsConversationIdDeleteErrors, ThrowOnError>({ url: '/api/v1/conversations/{conversation_id}', ...options });
 
 /**
  * Get Conversation
+ *
+ * Return a conversation together with its messages.
  */
 export const getConversationApiV1ConversationsConversationIdGet = <ThrowOnError extends boolean = false>(options: Options<GetConversationApiV1ConversationsConversationIdGetData, ThrowOnError>): RequestResult<GetConversationApiV1ConversationsConversationIdGetResponses, GetConversationApiV1ConversationsConversationIdGetErrors, ThrowOnError> => (options.client ?? client).get<GetConversationApiV1ConversationsConversationIdGetResponses, GetConversationApiV1ConversationsConversationIdGetErrors, ThrowOnError>({ url: '/api/v1/conversations/{conversation_id}', ...options });
 
 /**
  * Create Message
+ *
+ * Answer a question against the conversation's fixed document scope.
  */
 export const createMessageApiV1ConversationsConversationIdMessagesPost = <ThrowOnError extends boolean = false>(options: Options<CreateMessageApiV1ConversationsConversationIdMessagesPostData, ThrowOnError>): RequestResult<CreateMessageApiV1ConversationsConversationIdMessagesPostResponses, CreateMessageApiV1ConversationsConversationIdMessagesPostErrors, ThrowOnError> => (options.client ?? client).post<CreateMessageApiV1ConversationsConversationIdMessagesPostResponses, CreateMessageApiV1ConversationsConversationIdMessagesPostErrors, ThrowOnError>({
     url: '/api/v1/conversations/{conversation_id}/messages',

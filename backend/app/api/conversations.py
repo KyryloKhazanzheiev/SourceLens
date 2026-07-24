@@ -21,6 +21,7 @@ router = APIRouter(prefix="/conversations", tags=["conversations"])
 async def list_conversations(
     container: Annotated[AppContainer, Depends(get_container)],
 ) -> list[Conversation]:
+    """Return saved conversations ordered by most recent activity."""
     return await container.mongo.list_conversations()
 
 
@@ -29,6 +30,7 @@ async def create_conversation(
     payload: ConversationCreate,
     container: Annotated[AppContainer, Depends(get_container)],
 ) -> Conversation:
+    """Create a conversation scoped to documents that are ready for retrieval."""
     documents = [await container.mongo.get_document(item) for item in payload.document_ids]
     if any(document is None or document.status != "ready" for document in documents):
         raise HTTPException(status_code=400, detail="Select documents that are ready.")
@@ -44,6 +46,7 @@ async def get_conversation(
     conversation_id: str,
     container: Annotated[AppContainer, Depends(get_container)],
 ) -> ConversationDetail:
+    """Return a conversation together with its messages."""
     conversation = await container.mongo.get_conversation_detail(conversation_id)
     if conversation is None:
         raise HTTPException(status_code=404, detail="Conversation not found.")
@@ -59,6 +62,7 @@ async def delete_conversation(
     conversation_id: str,
     container: Annotated[AppContainer, Depends(get_container)],
 ) -> None:
+    """Delete a conversation and all messages that belong to it."""
     if not await container.mongo.delete_conversation(conversation_id):
         raise HTTPException(status_code=404, detail="Conversation not found.")
 
@@ -74,6 +78,7 @@ async def create_message(
     payload: MessageCreate,
     container: Annotated[AppContainer, Depends(get_container)],
 ) -> Message:
+    """Answer a question against the conversation's fixed document scope."""
     try:
         return await container.rag.ask(conversation_id, payload.content)
     except LookupError as exc:

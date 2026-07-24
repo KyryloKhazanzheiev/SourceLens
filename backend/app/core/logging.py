@@ -5,6 +5,7 @@ import structlog
 
 
 def configure_logging() -> None:
+    """Configure structured JSON logging for the API process."""
     logging.basicConfig(format="%(message)s", stream=sys.stdout, level=logging.INFO)
     structlog.configure(
         processors=[

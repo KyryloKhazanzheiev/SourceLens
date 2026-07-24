@@ -28,8 +28,16 @@ class FakeMongo:
 class FakeVectors:
     def __init__(self, matches: list[dict]) -> None:
         self.matches = matches
+        self.query_text: str | None = None
 
-    def search(self, query_vector: list[float], document_ids: list[str], limit: int):
+    def search(
+        self,
+        query_vector: list[float],
+        query_text: str,
+        document_ids: list[str],
+        limit: int,
+    ):
+        self.query_text = query_text
         return self.matches
 
 
@@ -63,10 +71,12 @@ def test_relevance_converts_cosine_distance() -> None:
 @pytest.mark.asyncio
 async def test_no_relevant_passages_has_specific_reason() -> None:
     mongo = FakeMongo()
-    service = RagService(settings(), mongo, FakeVectors([]), FakeOpenAI())
+    vectors = FakeVectors([])
+    service = RagService(settings(), mongo, vectors, FakeOpenAI())
 
     message = await service.ask("conversation-1", "What is missing?")
 
+    assert vectors.query_text == "What is missing?"
     assert message.content == NO_RELEVANT_PASSAGES
     assert message.abstention_reason == AbstentionReason.no_relevant_passages
     assert message.retrieval_count == 0
@@ -96,3 +106,27 @@ async def test_related_but_unsupported_passages_have_specific_reason() -> None:
     assert message.abstention_reason == AbstentionReason.insufficient_support
     assert message.retrieval_count == 1
     assert message.retrieval_best_relevance == 0.8
+
+
+@pytest.mark.asyncio
+async def test_supported_answer_preserves_model_source_number() -> None:
+    mongo = FakeMongo()
+    match = {
+        "_distance": 0.1,
+        "chunk_id": "chunk-1",
+        "document_id": "document-1",
+        "filename": "document.pdf",
+        "page_number": 4,
+        "text": "The launch date is 24 July.",
+    }
+    payload = AnswerPayload(
+        answer="The launch date is 24 July [1].",
+        cited_source_ids=[1],
+        has_sufficient_evidence=True,
+    )
+    service = RagService(settings(), mongo, FakeVectors([match]), FakeOpenAI(payload))
+
+    message = await service.ask("conversation-1", "When is the launch?")
+
+    assert message.citations[0].source_number == 1
+    assert message.citations[0].page_number == 4

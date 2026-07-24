@@ -25,9 +25,17 @@ export type {
   MessageRecord,
 };
 
-client.setConfig({
-  baseUrl: process.env.NEXT_PUBLIC_API_ORIGIN ?? "http://localhost:8000",
-});
+const apiOrigin = (process.env.NEXT_PUBLIC_API_ORIGIN ?? "http://localhost:8000").replace(
+  /\/+$/,
+  "",
+);
+
+client.setConfig({ baseUrl: apiOrigin });
+
+export function documentContentUrl(documentId: string, pageNumber: number) {
+  const page = Math.max(1, Math.floor(pageNumber));
+  return `${apiOrigin}/api/v1/documents/${encodeURIComponent(documentId)}/content#page=${page}`;
+}
 
 const checked = { throwOnError: true } as const;
 
