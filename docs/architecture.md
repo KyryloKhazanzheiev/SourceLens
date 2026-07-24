@@ -20,6 +20,9 @@ The local first draft processes ingestion in the request. Production should use 
 ## Retrieval constraints
 
 - Search is always filtered by the conversation's persisted document IDs.
+- LanceDB runs cosine vector search and BM25-style full-text search over the same
+  scoped chunks.
+- The built-in model-free RRF reranker combines both result lists.
 - Candidate and final-context limits are configurable.
 - Cosine distance is converted to a bounded relevance value.
 - Sources below the minimum threshold are removed before generation.
@@ -28,7 +31,7 @@ The local first draft processes ingestion in the request. Production should use 
 
 ## Threat model highlights
 
-Uploaded text is attacker-controlled. It is never executed and is explicitly labelled untrusted in the generation instructions. File paths are generated from server-side UUIDs. The service applies extension, size, empty-file, duplicate, UTF-8, PDF parsing, and extractable-text checks.
+Uploaded text is attacker-controlled. It is never executed and is explicitly labelled untrusted in the generation instructions. File paths are generated from server-side UUIDs, and original-file lookup is kept inside the configured upload directory. The service applies extension, size, empty-file, duplicate, UTF-8, PDF parsing, and extractable-text checks.
 
 The MVP is single-user and must not be exposed publicly without authentication and object-level authorisation. Production also needs malware scanning, quotas, encryption, retention/deletion controls, tenant filters in every repository query, and audit events.
 
@@ -36,7 +39,8 @@ The MVP is single-user and must not be exposed publicly without authentication a
 
 - Ingestion is synchronous.
 - There is no OCR.
-- Vector retrieval has no lexical component or reranker.
+- Retrieval thresholds have not yet been calibrated against a labelled evaluation set.
 - Conversation history is persisted but not yet used for follow-up-question rewriting.
-- Citation excerpts are returned, but there is no PDF preview/deep link yet.
+- Citations open the original file and page, but the exact supporting text is not
+  highlighted inside the PDF.
 - The local two-store deletion sequence is best-effort rather than transactional.

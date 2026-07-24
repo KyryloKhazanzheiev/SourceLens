@@ -1,25 +1,33 @@
-# AI-assisted development record
+# How I used AI
 
-AI-assisted tools were used to accelerate architecture comparison, scaffold repetitive code, suggest test cases, refine the product interface, and review documentation.
+I used AI-assisted tools to compare architecture options, scaffold repetitive code,
+suggest test cases, refine the interface, and review documentation.
 
 ## Working rules
 
-1. The developer owns every architecture and product decision.
-2. Generated code is reviewed in context; it is not accepted because it compiles.
-3. Type checks, static analysis, tests, runtime checks, and visual inspection provide separate verification layers.
-4. Secrets, production data, and private documents are never placed in prompts.
-5. Prompts and generated artefacts do not override repository security or licensing obligations.
-6. Material AI-suggested dependencies are checked for maintenance, licence, security, and fit.
-7. The README states meaningful trade-offs and limitations instead of presenting generated confidence as evidence.
+1. I own the architecture and product decisions.
+2. I review generated code in context; compiling is not enough.
+3. I use type checks, static analysis, tests, runtime checks, and visual inspection as
+   separate verification layers.
+4. I do not put secrets or production customer data into prompts.
+5. Prompts and generated artefacts do not override security or licensing obligations.
+6. I check suggested dependencies for maintenance, licence, security, and fit.
+7. I document trade-offs and limitations instead of presenting generated confidence
+   as evidence.
 
-## Examples of human judgment retained
+## Decisions I made myself
 
-- Selecting direct RAG instead of an agent framework for a deterministic two-stage workflow.
-- Rejecting MongoDB inside App Runner because stateful storage does not belong in ephemeral application instances.
-- Treating model citations as untrusted output and validating them server-side.
-- Keeping OCR, reranking, and cloud deployment out of the MVP critical path.
-- Requiring evaluation evidence before making the retrieval stack more complex.
+- I chose direct RAG instead of an agent framework for a deterministic two-stage flow.
+- I rejected MongoDB inside App Runner because stateful storage does not belong in
+  ephemeral application instances.
+- I treat model citations as untrusted output and validate them on the server.
+- I added model-free RRF to combine semantic and lexical results without adding a
+  second model dependency.
+- I kept OCR and cloud deployment outside the MVP critical path.
+- I label retrieval similarity as source relevance rather than model confidence.
 
 ## Reproducibility
 
-The repository contains the architecture rationale, explicit environment contract, dependency lock files, generated OpenAPI contract, tests, and local run commands needed for another engineer to inspect or reproduce the work.
+The repository contains the architecture rationale, environment contract, dependency
+lock files, generated OpenAPI contract, tests, and local run commands needed for
+another engineer to inspect or reproduce the work.
